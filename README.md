@@ -5,7 +5,7 @@
 
 > #### Revancify v1 will be deprecated once Revanced Extended bring support for `.rvp` patches.  
 > ReVanced has changed the patches format to `.rvp` in v5.  
-> For patching apps with **ReVanced** patches, check [**Revancify v2**](https://github.com/decipher3114/Revancify/tree/bump/v2.0)
+> For patching apps with **ReVanced** patches, check [**Revancify v2**](https://github.com/arghya339/Revancify/tree/bump/v2.0)
 
 ## Termux
 
@@ -39,14 +39,14 @@
 2. Open Termux.
 3. Copy and paste this command.
 ```
-curl -sL "https://raw.githubusercontent.com/decipher3114/Revancify/main/install.sh" | bash
+curl -sL "https://raw.githubusercontent.com/arghya339/Revancify/main/install.sh" | bash
 ```
 
 <details>
   <summary>If the above one doesn't work, use this.</summary>
 
   ```
-pkg update -y -o Dpkg::Options::="--force-confnew" && pkg install git -y && git clone --depth=1 https://github.com/decipher3114/Revancify.git && ./Revancify/revancify
+pkg update -y -o Dpkg::Options::="--force-confnew" && pkg install git -y && git clone --depth=1 https://github.com/arghya339/Revancify.git && ./Revancify/revancify
 ```
 </details>
 

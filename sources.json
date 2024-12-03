@@ -130,5 +130,27 @@
                 "repo": "revanced-integrations"
             }
         }
+    },
+    "arghya339": 
+    {
+        "projectName": "RVX-Android_6-7-Fork",
+        "sources": 
+        {
+            "cli":
+            {
+                "org": "kitadai31",
+                "repo": "revanced-cli"
+            },
+            "patches":
+            {
+                "org": "arghya339",
+                "repo": "revanced-patches-android6-7"
+            },
+            "integrations":
+            {
+                "org": "arghya339",
+                "repo": "revanced-integrations"
+            }
+        }
     }
 }
