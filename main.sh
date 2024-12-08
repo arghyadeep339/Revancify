@@ -96,13 +96,12 @@ fetchToolsAPI() {
     source ./".${source}-data"
 
     cliAvailableSize=$(ls "$cliSource"-cli-*.jar &> /dev/null && du -b "$cliSource"-cli-*.jar | cut -d $'\t' -f 1 || echo 0)
-    patchesAvailableSize=$(ls "$patchesSource"-patches-*.jar &> /dev/null && du -b "$patchesSource"-patches-*.jar | cut -d $'\t' -f 1 || echo 0)
-    integrationsAvailableSize=$(ls "$integrationsSource"-integrations-*.apk &> /dev/null && du -b "$integrationsSource"-integrations-*.apk | cut -d $'\t' -f 1 || echo 0)
+    patchesAvailableSize=$(ls "$patchesSource"-patches-*.rvp &> /dev/null && du -b "$patchesSource"-patches-*.rvp | cut -d $'\t' -f 1 || echo 0)
 }
 
 getTools() {
     fetchToolsAPI || return 1
-    if [ -e "$patchesSource-patches-$patchesLatest.jar" ] && [ -e "$patchesSource-patches-$patchesLatest.json" ] && [ -e "$cliSource-cli-$cliLatest.jar" ] && [ -e "$integrationsSource-integrations-$integrationsLatest.apk" ] && [ "$cliSize" == "$cliAvailableSize" ] && [ "$patchesSize" == "$patchesAvailableSize" ] && [ "$integrationsSize" == "$integrationsAvailableSize" ]; then
+    if [ -e "$patchesSource-patches-$patchesLatest.rvp" ] && [ -e "$patchesSource-patches-$patchesLatest.json" ] && [ -e "$cliSource-cli-$cliLatest.jar" ] && [ "$cliSize" == "$cliAvailableSize" ] && [ "$patchesSize" == "$patchesAvailableSize" ]; then
         if [ "$(bash "$repoDir/fetch_patches.sh" "$patchesSource" online "$storagePath")" == "error" ]; then
             "${header[@]}" --msgbox "Tools are successfully downloaded but Apkmirror API is not accessible. So, patches are not successfully synced.\nRevancify may crash.\n\nChange your network." 12 45
             return 1
@@ -110,25 +109,19 @@ getTools() {
         "${header[@]}" --msgbox "Tools are already downloaded !!\n\nPatches are successfully synced." 12 45
         return 0
     fi
-    [ -e "$patchesSource-patches-$patchesLatest.jar" ] || { rm "$patchesSource"-patches-*.jar &> /dev/null && rm "$patchesSource"-patches-*.json &> /dev/null && patchesAvailableSize=0 ;}
+    [ -e "$patchesSource-patches-$patchesLatest.rvp" ] || { rm "$patchesSource"-patches-*.rvp &> /dev/null && rm "$patchesSource"-patches-*.json &> /dev/null && patchesAvailableSize=0 ;}
     [ -e "$cliSource-cli-$cliLatest.jar" ] || { rm "$cliSource"-cli-*.jar &> /dev/null && cliAvailableSize=0 ;}
-    [ -e "$integrationsSource-integrations-$integrationsLatest.apk" ] || { rm "$integrationsSource"-integrations-*.apk &> /dev/null && integrationsAvailableSize=0 ;}
     [ "$cliSize" != "$cliAvailableSize" ] &&
         wget -q -c "$cliUrl" -O "$cliSource"-cli-"$cliLatest".jar --show-progress --user-agent="$userAgent" 2>&1 | stdbuf -o0 cut -b 63-65 | stdbuf -o0 grep '[0-9]' | "${header[@]}" --begin 2 0 --gauge "Source  : $cliSource\nTool    : CLI\nVersion : $cliLatest\nSize    : $(numfmt --to=iec --format="%0.1f" "$cliSize")\n\nDownloading..." -1 -1 "$(($((cliAvailableSize * 100)) / cliSize))" && tput civis
 
     [ "$cliSize" != "$(ls "$cliSource"-cli-*.jar &> /dev/null && du -b "$cliSource"-cli-*.jar | cut -d $'\t' -f 1 || echo 0)" ] && "${header[@]}" --msgbox "Oops! Unable to download completely.\n\nRetry or change your Network." 12 45 && return 1
 
     [ "$patchesSize" != "$patchesAvailableSize" ] &&
-        wget -q -c "$patchesUrl" -O "$patchesSource"-patches-"$patchesLatest".jar --show-progress --user-agent="$userAgent" 2>&1 | stdbuf -o0 cut -b 63-65 | stdbuf -o0 grep '[0-9]' | "${header[@]}" --begin 2 0 --gauge "Source  : $patchesSource\nTool    : Patches\nVersion : $patchesLatest\nSize    : $(numfmt --to=iec --format="%0.1f" "$patchesSize")\n\nDownloading..." -1 -1 "$(($((patchesAvailableSize * 100 / patchesSize))))" && tput civis && patchesUpdated=true
+        wget -q -c "$patchesUrl" -O "$patchesSource"-patches-"$patchesLatest".rvp --show-progress --user-agent="$userAgent" 2>&1 | stdbuf -o0 cut -b 63-65 | stdbuf -o0 grep '[0-9]' | "${header[@]}" --begin 2 0 --gauge "Source  : $patchesSource\nTool    : Patches\nVersion : $patchesLatest\nSize    : $(numfmt --to=iec --format="%0.1f" "$patchesSize")\n\nDownloading..." -1 -1 "$(($((patchesAvailableSize * 100 / patchesSize))))" && tput civis && patchesUpdated=true
 
     wget -q -c "$jsonUrl" -O "$patchesSource"-patches-"$patchesLatest".json --user-agent="$userAgent"
 
-    [ "$patchesSize" != "$(ls "$patchesSource"-patches-*.jar &> /dev/null && du -b "$patchesSource"-patches-*.jar | cut -d $'\t' -f 1 || echo 0)" ] && "${header[@]}" --msgbox "Oops! Unable to download completely.\n\nRetry or change your Network." 12 45 && return 1
-
-    [ "$integrationsSize" != "$integrationsAvailableSize" ] &&
-        wget -q -c "$integrationsUrl" -O "$integrationsSource"-integrations-"$integrationsLatest".apk --show-progress --user-agent="$userAgent" 2>&1 | stdbuf -o0 cut -b 63-65 | stdbuf -o0 grep '[0-9]' | "${header[@]}" --begin 2 0 --gauge "Source  : $integrationsSource\nTool    : Integrations\nVersion : $integrationsLatest\nSize    : $(numfmt --to=iec --format="%0.1f" "$integrationsSize")\n\nDownloading..." -1 -1 "$(($((integrationsAvailableSize * 100 / integrationsSize))))" && tput civis
-
-    [ "$integrationsSize" != "$(ls "$integrationsSource"-integrations-*.apk &> /dev/null && du -b "$integrationsSource"-integrations-*.apk | cut -d $'\t' -f 1 || echo 0)" ] && "${header[@]}" --msgbox "Oops! File not downloaded.\n\nRetry or change your Network." 12 45 && return 1
+    [ "$patchesSize" != "$(ls "$patchesSource"-patches-*.rvp &> /dev/null && du -b "$patchesSource"-patches-*.rvp | cut -d $'\t' -f 1 || echo 0)" ] && "${header[@]}" --msgbox "Oops! Unable to download completely.\n\nRetry or change your Network." 12 45 && return 1
 
     if [ "$patchesUpdated" == true ]; then
         "${header[@]}" --infobox "Updating patches and options file..." 12 45
@@ -136,7 +129,7 @@ getTools() {
             "${header[@]}" --msgbox "Tools are successfully downloaded but Apkmirror API is not accessible. So, patches are not successfully synced.\nRevancify may crash.\n\nChange your network." 12 45
             return 1
         fi
-        java -jar "$cliSource"-cli-*.jar options -ou -p "$storagePath/$source-options.json" "$patchesSource"-patches-*.jar &> /dev/null
+        java -jar "$cliSource"-cli-*.jar options -ou -p "$storagePath/$source-options.json" "$patchesSource"-patches-*.rvp &> /dev/null
     fi
 
     refreshJson || return 1
@@ -279,7 +272,7 @@ patchSaver() {
 
 editPatchOptions() {
     if [ ! -f "$storagePath/$source-options.json" ]; then
-        java -jar "$cliSource"-cli-*.jar options -ou -p "$storagePath/$source-options.json" "$patchesSource"-patches-*.jar &> /dev/null
+        java -jar "$cliSource"-cli-*.jar options -ou -p "$storagePath/$source-options.json" "$patchesSource"-patches-*.rvp &> /dev/null
     fi
     currentPatch="none"
     optionsJson=$(jq '.' "$storagePath/$source-options.json")
@@ -375,7 +368,7 @@ checkTools() {
     else
         getTools || return 1
     fi
-    if [ "$cliSize" == "$(ls "$cliSource"-cli-*.jar &> /dev/null && du -b "$cliSource"-cli-*.jar | cut -d $'\t' -f 1 || echo 0)" ] && [ "$patchesSize" == "$(ls "$patchesSource"-patches-*.jar &> /dev/null && du -b "$patchesSource"-patches-*.jar | cut -d $'\t' -f 1 || echo 0)" ] && [ "$integrationsSize" == "$(ls "$integrationsSource"-integrations-*.apk &> /dev/null && du -b "$integrationsSource"-integrations-*.apk | cut -d $'\t' -f 1 || echo 0)" ] && ls "$storagePath/$source-patches.json" &> /dev/null; then
+    if [ "$cliSize" == "$(ls "$cliSource"-cli-*.jar &> /dev/null && du -b "$cliSource"-cli-*.jar | cut -d $'\t' -f 1 || echo 0)" ] && [ "$patchesSize" == "$(ls "$patchesSource"-patches-*.rvp &> /dev/null && du -b "$patchesSource"-patches-*.rvp | cut -d $'\t' -f 1 || echo 0)" ] && ls "$storagePath/$source-patches.json" &> /dev/null; then
         refreshJson || return 1
     else
         getTools || return 1
@@ -624,8 +617,8 @@ patchApk() {
     fi
     includedPatches=$(jq '.' "$storagePath/$source-patches.json" 2>/dev/null || jq -n '[]')
     readarray -t patchesArg < <(jq -n -r --argjson includedPatches "$includedPatches" --arg pkgName "$pkgName" '$includedPatches[] | select(.pkgName == $pkgName).includedPatches | if ((. | length) != 0) then (.[] | "-i", .) else empty end')
-    java -jar "$cliSource"-cli-*.jar patch -fpw -b "$patchesSource"-patches-*.jar -m "$integrationsSource"-integrations-*.apk -o "apps/$appName-$appVer-$sourceName.apk" "${riplibArgs[@]}" "${patchesArg[@]}" --keystore "$repoDir"/revancify.keystore --keystore-entry-alias "decipher" --signer "decipher" --keystore-entry-password "revancify" --keystore-password "revancify" --custom-aapt2-binary ./aapt2 --options "$storagePath/$source-options.json" --exclusive "apps/$appName-$appVer.apk" 2>&1 | tee "$storagePath/patch_log.txt" | "${header[@]}" --begin 2 0 --ok-label "Continue" --cursor-off-label --programbox "Patching $appName $selectedVer.apk" -1 -1
-    echo -e "\n\n\nRooted: $root\nArch: $arch\nApp: $appName v$appVer\nCLI: $(ls "$cliSource"-cli-*.jar)\nPatches: $(ls "$patchesSource"-patches-*.jar)\nIntegrations: $(ls "$integrationsSource"-integrations-*.apk)\nPatches argument: ${patchesArg[*]}" >>"$storagePath/patch_log.txt"
+    java -jar "$cliSource"-cli-*.jar patch -fpw -b "$patchesSource"-patches-*.rvp -o "apps/$appName-$appVer-$sourceName.apk" "${riplibArgs[@]}" "${patchesArg[@]}" --keystore "$repoDir"/revancify.keystore --keystore-entry-alias "decipher" --signer "decipher" --keystore-entry-password "revancify" --keystore-password "revancify" --custom-aapt2-binary ./aapt2 --options "$storagePath/$source-options.json" --exclusive "apps/$appName-$appVer.apk" 2>&1 | tee "$storagePath/patch_log.txt" | "${header[@]}" --begin 2 0 --ok-label "Continue" --cursor-off-label --programbox "Patching $appName $selectedVer.apk" -1 -1
+    echo -e "\n\n\nRooted: $root\nArch: $arch\nApp: $appName v$appVer\nCLI: $(ls "$cliSource"-cli-*.jar)\nPatches: $(ls "$patchesSource"-patches-*.rvp)\nPatches argument: ${patchesArg[*]}" >>"$storagePath/patch_log.txt"
     tput civis
     sleep 1
     if [ ! -f "apps/$appName-$appVer-$sourceName.apk" ]; then
@@ -639,11 +632,10 @@ deleteComponents() {
         delComponentPrompt=$("${header[@]}" --begin 2 0 --title '| Delete Components Menu |' --ok-label "Select" --cancel-label "Back" --menu "Use arrow keys to navigate\nSource: $sourceName" -1 -1 0 1 "Tools" 2 "Apps" 3 "Patch Options" 2>&1 >/dev/tty) || break
         case "$delComponentPrompt" in
         1 )
-            if "${header[@]}" --begin 2 0 --title '| Delete Tools |' --no-items --defaultno --yesno "Please confirm to delete the tools.\nIt will delete the $sourceName CLI, patches and integrations." -1 -1; then
+            if "${header[@]}" --begin 2 0 --title '| Delete Tools |' --no-items --defaultno --yesno "Please confirm to delete the tools.\nIt will delete the $sourceName CLI and patches." -1 -1; then
                 rm "$cliSource"-cli-*.jar &> /dev/null
-                rm "$patchesSource"-patches-*.jar &> /dev/null
+                rm "$patchesSource"-patches-*.rvp &> /dev/null
                 rm "$patchesSource"-patches-*.json &> /dev/null
-                rm "$integrationsSource"-integrations-*.apk &> /dev/null
                 "${header[@]}" --msgbox "All $sourceName Tools successfully deleted !!" 12 45
             fi
             ;;

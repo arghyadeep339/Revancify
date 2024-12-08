@@ -2,6 +2,7 @@
 *.json
 *.txt
 *.jar
+*.rvp
 *.apk
 *.sh
 

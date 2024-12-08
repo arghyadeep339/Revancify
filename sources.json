@@ -1,8 +1,8 @@
 {
-    "YT-Advanced": 
+    "revanced":
     {
-        "projectName": "ReX",
-        "sources": 
+        "projectName": "Revanced",
+        "sources":
         {
             "cli":
             {
@@ -11,13 +11,8 @@
             },
             "patches":
             {
-                "org": "YT-Advanced",
-                "repo": "ReX-patches"
-            },
-            "integrations":
-            {
-                "org": "YT-Advanced",
-                "repo": "ReX-integrations"
+                "org": "revanced",
+                "repo": "revanced-patches"
             }
         }
     },
@@ -35,121 +30,6 @@
             {
                 "org": "inotia00",
                 "repo": "revanced-patches"
-            },
-            "integrations":
-            {
-                "org": "inotia00",
-                "repo": "revanced-integrations"
-            }
-        }
-    },
-    "kitadai31": 
-    {
-        "projectName": "RVX-Android_6-7",
-        "sources": 
-        {
-            "cli":
-            {
-                "org": "kitadai31",
-                "repo": "revanced-cli"
-            },
-            "patches":
-            {
-                "org": "kitadai31",
-                "repo": "revanced-patches-android6-7"
-            },
-            "integrations":
-            {
-                "org": "kitadai31",
-                "repo": "revanced-integrations"
-            }
-        }
-    },
-    "rufusin": 
-    {
-        "projectName": "RVX-rufusin",
-        "sources": 
-        {
-            "cli":
-            {
-                "org": "inotia00",
-                "repo": "revanced-cli"
-            },
-            "patches":
-            {
-                "org": "rufusin",
-                "repo": "revanced-patches"
-            },
-            "integrations":
-            {
-                "org": "rufusin",
-                "repo": "revanced-integrations"
-            }
-        }
-    },
-    "anddea": 
-    {
-        "projectName": "RVX-anddea",
-        "sources": 
-        {
-            "cli":
-            {
-                "org": "inotia00",
-                "repo": "revanced-cli"
-            },
-            "patches":
-            {
-                "org": "anddea",
-                "repo": "revanced-patches"
-            },
-            "integrations":
-            {
-                "org": "anddea",
-                "repo": "revanced-integrations"
-            }
-        }
-    },
-    "d4n3436": 
-    {
-        "projectName": "RVX-Android-5",
-        "sources": 
-        {
-            "cli":
-            {
-                "org": "kitadai31",
-                "repo": "revanced-cli"
-            },
-            "patches":
-            {
-                "org": "d4n3436",
-                "repo": "revanced-patches-android5"
-            },
-            "integrations":
-            {
-                "org": "d4n3436",
-                "repo": "revanced-integrations"
-            }
-        }
-    },
-    "arghya339": 
-    {
-        "projectName": "RVX-Android_6-7-Fork",
-        "sources": 
-        {
-            "cli":
-            {
-                "org": "kitadai31",
-                "repo": "revanced-cli"
-            },
-            "patches":
-            {
-                "org": "arghya339",
-                "repo": "revanced-patches-android6-7"
-            },
-            "integrations":
-            {
-                "org": "arghya339",
-                "repo": "revanced-integrations"
             }
         }
     }
